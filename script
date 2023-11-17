@@ -1,0 +1,43 @@
+import re
+import PySimpleGUI as sg
+from pathlib import Path
+
+layout = [
+    [
+        sg.Input(key='-INPUT-'),
+        sg.FileBrowse(file_types=(("TXT Files", "*.txt"), ("ALL Files", "*.*"))),
+        sg.Button("Run"),
+    ]
+]
+
+window = sg.Window('BackgroundWriter', layout)
+
+while True:
+    event, values = window.read()
+    if event == sg.WINDOW_CLOSED:
+        break
+    elif event == 'Open':
+        filename = values['-INPUT-']
+        if Path(filename).is_file():
+            try:
+                with open(filename, "r", encoding= 'utf-8')as f:
+                    data = f.read()
+                    #data = mmap.mmap(f.fileno(), 0)
+                    presenting = re.search((("(?<=Illness:)((.|\n)*)(?=Treatment)")), data)
+                    print(presenting)
+                with open('/home/michael/Dropbox/dictation/output.txt', 'w', encoding="utf-8") as f:
+                     f.writelines(presenting.group(0))
+                print("written")
+
+
+           # except Exception as e:
+               # print("Error:", e)
+            finally:
+                print("done")
+
+
+
+window.close()
+
+
+
